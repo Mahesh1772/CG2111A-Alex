@@ -729,6 +729,7 @@ void handleCommand(TPacket *command)
       break;
 
     case COMMAND_GET_COLOUR:
+      sendOK();
       readColor();
       break;
     
