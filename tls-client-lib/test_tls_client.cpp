@@ -54,7 +54,7 @@ void *writerThread(void *conn) {
 #define PORT_NUM 5000
 #define CLIENT_CERT_FNAME "laptop.crt"
 #define CLIENT_KEY_FNAME "laptop.key"
-#define SERVER_NAME_ON_CERT "LAPTOP"
+#define SERVER_NAME_ON_CERT "ALEX.COM"
 
 int main() {
 

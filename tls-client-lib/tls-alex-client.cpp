@@ -79,20 +79,20 @@ void handleNetwork(const char *buffer, int len)
 	switch(type)
 	{
 		case NET_ERROR_PACKET:
-		handleError(buffer);
-		break;
+			handleError(buffer);
+			break;
 
 		case NET_STATUS_PACKET:
-		handleStatus(buffer);
-		break;
+			handleStatus(buffer);
+			break;
 
 		case NET_MESSAGE_PACKET:
-		handleMessage(buffer);
-		break;
+			handleMessage(buffer);
+			break;
 
 		case NET_COMMAND_PACKET:
-		handleCommand(buffer);
-		break;
+			handleCommand(buffer);
+			break;
 	}
 }
 
@@ -104,6 +104,8 @@ void sendData(void *conn, const char *buffer, int len)
 	{
 		/* TODO: Insert SSL write here to write buffer to network */
 
+
+		sslWrite(conn, buffer, len);
 
 		/* END TODO */	
 		networkActive = (c > 0);
@@ -119,8 +121,9 @@ void *readerThread(void *conn)
 	{
 		/* TODO: Insert SSL read here into buffer */
 
-        printf("read %d bytes from server.\n", len);
-		
+		len = sslRead(conn, buffer, sizeof(buffer));
+		printf("read %d bytes from server.\n", len);
+
 		/* END TODO */
 
 		networkActive = (len > 0);
@@ -130,10 +133,12 @@ void *readerThread(void *conn)
 	}
 
 	printf("Exiting network listener thread\n");
-    
-    /* TODO: Stop the client loop and call EXIT_THREAD */
 
-    /* END TODO */
+	/* TODO: Stop the client loop and call EXIT_THREAD */
+
+	stopClient();
+        EXIT_THREAD(conn);
+	/* END TODO */
 }
 
 void flushInput()
@@ -178,23 +183,23 @@ void *writerThread(void *conn)
 			case 'L':
 			case 'r':
 			case 'R':
-						getParams(params);
-						buffer[1] = ch;
-						memcpy(&buffer[2], params, sizeof(params));
-						sendData(conn, buffer, sizeof(buffer));
-						break;
+				getParams(params);
+				buffer[1] = ch;
+				memcpy(&buffer[2], params, sizeof(params));
+				sendData(conn, buffer, sizeof(buffer));
+				break;
 			case 's':
 			case 'S':
 			case 'c':
 			case 'C':
 			case 'g':
 			case 'G':
-					params[0]=0;
-					params[1]=0;
-					memcpy(&buffer[2], params, sizeof(params));
-					buffer[1] = ch;
-					sendData(conn, buffer, sizeof(buffer));
-					break;
+				params[0]=0;
+				params[1]=0;
+				memcpy(&buffer[2], params, sizeof(params));
+				buffer[1] = ch;
+				sendData(conn, buffer, sizeof(buffer));
+				break;
 			case 'q':
 			case 'Q':
 				quit=1;
@@ -206,21 +211,28 @@ void *writerThread(void *conn)
 
 	printf("Exiting keyboard thread\n");
 
-    /* TODO: Stop the client loop and call EXIT_THREAD */
+	/* TODO: Stop the client loop and call EXIT_THREAD */
 
-    /* END TODO */
+	stopClient(); 
+        EXIT_THREAD(conn);
+
+	/* END TODO */
 }
 
 /* TODO: #define filenames for the client private key, certificatea,
    CA filename, etc. that you need to create a client */
-
+#define CLIENT_PRIVATE_KEY "laptop.key" 
+#define CLIENT_CERT "laptop.crt" 
+#define CA_CERT "signing.pem" 
+#define SERVER_NAME "ALEX.COM"
 
 /* END TODO */
 void connectToServer(const char *serverName, int portNum)
 {
-    /* TODO: Create a new client */
+	/* TODO: Create a new client */
 
-    /* END TODO */
+	createClient(serverName, portNum, 1, CA_CERT, SERVER_NAME, 1, CLIENT_CERT, CLIENT_PRIVATE_KEY, readerThread, writerThread);
+	/* END TODO */
 }
 
 int main(int ac, char **av)
@@ -231,14 +243,14 @@ int main(int ac, char **av)
 		exit(-1);
 	}
 
-    networkActive = 1;
-    connectToServer(av[1], atoi(av[2]));
+	networkActive = 1;
+	connectToServer(av[1], atoi(av[2]));
 
-    /* TODO: Add in while loop to prevent main from exiting while the
-    client loop is running */
+	/* TODO: Add in while loop to prevent main from exiting while the
+	   client loop is running */
 
-
-
-    /* END TODO */
+	while(client_is_running());
+	
+	/* END TODO */
 	printf("\nMAIN exiting\n\n");
 }
