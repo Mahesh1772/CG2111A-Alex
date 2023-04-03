@@ -54,6 +54,8 @@ void handleColorvalue(TPacket *packet)
     data[0] = NET_COLOR_PACKET;
     memcpy(&data[1], packet->params, sizeof(packet->params));
     sendNetworkData(data, sizeof(data));
+    //int CURRENT_COLOR = (int)packet->params[3];
+    //printf("%d\n",CURRENT_COLOR);
 }
 
 void handleResponse(TPacket *packet)
@@ -69,9 +71,9 @@ void handleResponse(TPacket *packet)
 			handleStatus(packet);
 		break;
 		
-		case RESP_COLORSENSOR:
+		/*case RESP_COLORSENSOR:
 			handleColorvalue(packet);
-			break;
+		break;*/
 
 		default:
 			printf("Arduino is confused\n");
@@ -245,11 +247,11 @@ void sendCommand(char command)
 			exitFlag=1;
 			break;
 
-                case 'm':
+                /*case 'm':
 		case 'M':	
-			commandPacket.command = COMMAND_GET_COLOUR;
+			commandPacket.command = COMMAND_GET_COLOR;
 			sendPacket(&commandPacket);
-			break;
+			break; */
 
 		default:
 			printf("Bad command\n");
