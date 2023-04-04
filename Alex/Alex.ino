@@ -419,7 +419,7 @@ void forward(float dist, float speed)
   // RF = Right forward pin, RR = Right reverse pin
   // This will be replaced later with bare-metal code.
 
-  analogWrite(LF, val);
+  analogWrite(LF, val*0.945);
   analogWrite(RF, val);
   analogWrite(LR, 0);
   analogWrite(RR, 0);
@@ -729,7 +729,6 @@ void handleCommand(TPacket *command)
       break;
 
     case COMMAND_GET_COLOUR:
-      sendOK();
       readColor();
       break;
     
