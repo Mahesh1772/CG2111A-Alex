@@ -1,9 +1,10 @@
+#include "buffer.h"
 #include <serialize.h>
 #include "packet.h"
 #include "constants.h"
 #include "stdarg.h"
 #include <math.h>
-#include "buffer.h"
+
 
 typedef enum
 {
@@ -84,6 +85,11 @@ unsigned long deltaDist;
 unsigned long newDist;
 unsigned long deltaTicks;
 unsigned long targetTicks;
+
+#define BUFFER_LEN 129
+
+TBuffer _recvBuffer;
+TBuffer _xmitBuffer;
 
 /*
 
@@ -327,7 +333,7 @@ ISR(USART_UDRE_vect)
 {
 	unsigned char data;
 	TBufferResult result;
-	result = readBuffer(&_xmitBuffer. &data);
+	result = readBuffer(&_xmitBuffer, &data);
 
 	if (result == BUFFER_OK)
 	{
@@ -377,7 +383,7 @@ int readSerial(char *buffer)
 	//while (Serial.available())
 	//buffer[count++] = Serial.read();
 	TBufferResult result = BUFFER_OK;
-	TBufferResult result = BUFFER_OK;
+
 	for(count = 0; dataAvailable(&_recvBuffer) && result == BUFFER_OK; count +=1)
 	{
 		result = readBuffer(&_recvBuffer, (unsigned char*)&buffer[count]);
@@ -929,6 +935,3 @@ void loop() {
 		}
 	}
 }
-
-
-
