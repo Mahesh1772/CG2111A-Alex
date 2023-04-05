@@ -64,6 +64,20 @@ void handleMessage(const char *buffer)
 	printf("MESSAGE FROM ALEX: %s\n", &buffer[1]);
 }
 
+void handleColor(const char *buffer)
+{
+	int32_t data[16];
+	memcpy(data, &buffer[1], sizeof(data));
+	if(data[3] == 1)
+	{
+		printf("RED\n");
+	}
+	else
+	{
+		printf("GREEN\n");
+	}
+}
+
 void handleCommand(const char *buffer)
 {
 	// We don't do anything because we issue commands
@@ -93,6 +107,10 @@ void handleNetwork(const char *buffer, int len)
 		case NET_COMMAND_PACKET:
 			handleCommand(buffer);
 			break;
+
+		case NET_COLORSENSOR_PACKET:
+                        handleCommand(buffer);
+                        break;
 	}
 }
 
@@ -163,7 +181,7 @@ void *writerThread(void *conn)
 	while(!quit)
 	{
 		char ch;
-		printf("Command (f=forward, b=reverse, l=turn left, r=turn right, s=stop, c=clear stats, g=get stats q=exit)\n");
+		printf("Command (f=forward, b=reverse, l=turn left, r=turn right, m=color sensor, s=stop, c=clear stats, g=get stats q=exit)\n");
 		scanf("%c", &ch);
 
 		// Purge extraneous characters from input stream
@@ -204,6 +222,16 @@ void *writerThread(void *conn)
 			case 'Q':
 				quit=1;
 				break;
+
+			case 'm':
+			case 'M':
+				params[0]=0;
+                                params[1]=0;
+                                memcpy(&buffer[2], params, sizeof(params));
+                                buffer[1] = ch;
+                                sendData(conn, buffer, sizeof(buffer));
+				break;
+
 			default:
 				printf("BAD COMMAND\n");
 		}
