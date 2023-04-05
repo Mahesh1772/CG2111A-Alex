@@ -1,9 +1,17 @@
+<<<<<<< HEAD
+=======
+#include "buffer.h"
+>>>>>>> fa1c05a59bbccf496bf3f5199db4d9fbe46ec849
 #include <serialize.h>
 #include "packet.h"
 #include "constants.h"
 #include "stdarg.h"
 #include <math.h>
+<<<<<<< HEAD
 //#include "buffer.h"
+=======
+
+>>>>>>> fa1c05a59bbccf496bf3f5199db4d9fbe46ec849
 
 typedef enum
 {
@@ -85,6 +93,14 @@ unsigned long newDist;
 unsigned long deltaTicks;
 unsigned long targetTicks;
 
+<<<<<<< HEAD
+=======
+#define BUFFER_LEN 129
+
+TBuffer _recvBuffer;
+TBuffer _xmitBuffer;
+
+>>>>>>> fa1c05a59bbccf496bf3f5199db4d9fbe46ec849
 /*
 
    Alex Communication Routines.
@@ -327,7 +343,11 @@ ISR(USART_UDRE_vect)
 {
 	unsigned char data;
 	TBufferResult result;
+<<<<<<< HEAD
 	result = readBuffer(&_xmitBuffer. &data);
+=======
+	result = readBuffer(&_xmitBuffer, &data);
+>>>>>>> fa1c05a59bbccf496bf3f5199db4d9fbe46ec849
 
 	if (result == BUFFER_OK)
 	{
@@ -377,7 +397,11 @@ int readSerial(char *buffer)
 	//while (Serial.available())
 	//buffer[count++] = Serial.read();
 	TBufferResult result = BUFFER_OK;
+<<<<<<< HEAD
 	TBufferResult result = BUFFER_OK;
+=======
+
+>>>>>>> fa1c05a59bbccf496bf3f5199db4d9fbe46ec849
 	for(count = 0; dataAvailable(&_recvBuffer) && result == BUFFER_OK; count +=1)
 	{
 		result = readBuffer(&_recvBuffer, (unsigned char*)&buffer[count]);
@@ -929,6 +953,9 @@ void loop() {
 		}
 	}
 }
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> fa1c05a59bbccf496bf3f5199db4d9fbe46ec849
