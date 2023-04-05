@@ -56,6 +56,15 @@ void handleErrorResponse(TPacket *packet)
 	sendNetworkData(buffer, sizeof(buffer));
 }
 
+void handleColor(TPacket *packet)
+{
+	char data[65];
+	printf("UART COLOUR SENSOR PACKET\n");
+	data[0] = NET_COLORSENSOR_PACKET;
+	memcpy(&data[1], packet->data, sizeof(packet->params));
+	sendNetworkData(data, sizeof(data));
+}
+
 void handleMessage(TPacket *packet)
 {
 	char data[33];
@@ -271,6 +280,11 @@ void handleCommand(void *conn, const char *buffer)
 			uartSendPacket(&commandPacket);
 			break;
 
+		case 'm':
+		case 'M':
+			commandPacket.command = COMMAND_GET_COLOR;
+			uartSendPacket(&commandPacket);
+			break;
 		default:
 			printf("Bad command\n");
 
