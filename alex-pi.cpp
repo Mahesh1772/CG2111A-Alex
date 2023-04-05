@@ -196,6 +196,7 @@ void sendCommand(char command)
 
 	switch(command)
 	{
+		/*
 		case 'f':
 		case 'F':
 			getParams(&commandPacket);
@@ -220,6 +221,33 @@ void sendCommand(char command)
 		case 'l':
 		case 'L':
 			getParams(&commandPacket);
+			commandPacket.command = COMMAND_TURN_RIGHT;
+			sendPacket(&commandPacket);
+			break;
+			*/
+		case 'w':
+		case 'W':
+			
+			commandPacket.command = COMMAND_FORWARD;
+			sendPacket(&commandPacket);
+			break;
+
+		case 's':
+		case 'S':
+			
+			commandPacket.command = COMMAND_REVERSE;
+			sendPacket(&commandPacket);
+			break;
+
+		case 'a':
+		case 'A':
+			
+			commandPacket.command = COMMAND_TURN_LEFT;
+			sendPacket(&commandPacket);
+			break;
+
+		case 'd':
+		case 'D':
 			commandPacket.command = COMMAND_TURN_RIGHT;
 			sendPacket(&commandPacket);
 			break;
