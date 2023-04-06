@@ -639,7 +639,7 @@ void USsensor_reading()
   //Storing the distance calculated in the packet
   PulseTimeL = pulseIn(LEFT_ECHO_PIN, HIGH);
   USDistL = PulseTimeL * 0.034 / 2;
-  USPacket.params[1] = USDistL;
+  USPacket.params[0] = USDistL;
 
 
   //--------------------------------------------USING LEFT US------------------------------------------------
@@ -657,7 +657,7 @@ void USsensor_reading()
   //Storing the distance calculated in the packet
   PulseTimeR = pulseIn(RIGHT_ECHO_PIN, HIGH);
   USDistR = PulseTimeR * 0.034 / 2;
-  USPacket.params[2] = USDistR;
+  USPacket.params[1] = USDistR;
 	
   sendResponse(&USPacket);
 }
