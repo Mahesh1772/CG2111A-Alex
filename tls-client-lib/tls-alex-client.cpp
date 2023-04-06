@@ -109,7 +109,7 @@ void handleNetwork(const char *buffer, int len)
 			break;
 
 		case NET_COLORSENSOR_PACKET:
-            handleCommand(buffer);
+            handleColor(buffer);
             break;
 	}
 }
@@ -155,7 +155,7 @@ void *readerThread(void *conn)
 	/* TODO: Stop the client loop and call EXIT_THREAD */
 
 	stopClient();
-        EXIT_THREAD(conn);
+    EXIT_THREAD(conn);
 	/* END TODO */
 }
 
@@ -218,6 +218,7 @@ void *writerThread(void *conn)
 				buffer[1] = ch;
 				sendData(conn, buffer, sizeof(buffer));
 				break;
+
 			case 'q':
 			case 'Q':
 				quit=1;
@@ -226,10 +227,10 @@ void *writerThread(void *conn)
 			case 'm':
 			case 'M':
 				params[0]=0;
-                                params[1]=0;
-                                memcpy(&buffer[2], params, sizeof(params));
-                                buffer[1] = ch;
-                                sendData(conn, buffer, sizeof(buffer));
+				params[1]=0;
+                memcpy(&buffer[2], params, sizeof(params));
+                buffer[1] = ch;
+                sendData(conn, buffer, sizeof(buffer));
 				break;
 
 			default:
@@ -242,7 +243,7 @@ void *writerThread(void *conn)
 	/* TODO: Stop the client loop and call EXIT_THREAD */
 
 	stopClient(); 
-        EXIT_THREAD(conn);
+    EXIT_THREAD(conn);
 
 	/* END TODO */
 }
