@@ -48,8 +48,8 @@ volatile TDirection dir = STOP;
 #define ALEX_BREADTH 10
 
 // COLOR SENSOR PINS IN BARE-METAL
-#define S0 0b00100000 // pin 13 port B pin 5
-#define S1 0b00010000 // pin 12 port B pin 4
+#define S0 0b00100000 // pin A5 port C pin 5
+#define S1 0b00010000 // pin A4 port C pin 4
 #define S3 0b00000001 // pin 8 port B pin 0
 #define S2 0b00010000 // Pin 4 port D pin 4
 #define COLOR_OUT 0b10000000 // Pin 7 port D pin 7
@@ -77,7 +77,6 @@ volatile unsigned long leftReverseTicksTurns;
 volatile unsigned long rightReverseTicksTurns;
 
 
-
 // Store the revolutions on Alex's left
 // and right wheels
 volatile unsigned long leftRevs;
@@ -92,6 +91,23 @@ unsigned long deltaDist;
 unsigned long newDist;
 unsigned long deltaTicks;
 unsigned long targetTicks;
+
+//US VARIABLE definition
+#define RIGHT_TRIG_PIN 0b00001000 // pin A3 port C pin 3
+#define LEFT_TRIG_PIN  0b00000100 // pin A2 port C pin 2
+
+#define RIGHT_ECHO_PIN       12// pin 12 port B pin 4   
+#define RIGHT_ECHO_PIN_BARE  0b00010000
+
+#define LEFT_ECHO_PIN        13// pin 13 port B Pin 5
+#define LEFT_ECHO_PIN_BARE   0b00100000
+
+long PulseTimeL = 0;
+long USDistL = 0;
+
+long PulseTimeR = 0;
+long USDistL = 0;
+
 
 <<<<<<< HEAD
 =======
@@ -595,6 +611,17 @@ void right(float ang, float speed)
    digitalWrite(S3,HIGH);
    sendMessage(pulseIn(OUT,LOW));
    }*/
+
+void USsensor_setup()
+{
+  DDRC |= (RIGHT_TRIG_PIN | lEFT_TRIG_PIN);
+  DDRB &= (RIGHT_ECHO_PIN_BARE | LEFT_ECHO_PIN_BARE);
+}
+
+void USsensor_reading()
+{
+  
+}
 
 void setupColor()
 {
