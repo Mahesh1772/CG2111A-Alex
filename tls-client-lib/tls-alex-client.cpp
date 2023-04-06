@@ -64,6 +64,16 @@ void handleMessage(const char *buffer)
 	printf("MESSAGE FROM ALEX: %s\n", &buffer[1]);
 }
 
+void handleUS(const char *buffer)
+{
+	int32_t data[16];
+	memcpy(data, &buffer[1], sizeof(data));
+	printf("DISTANCE ON THE LEFT:" , data[0]);
+	printf("\n");
+	printf("DISTANCE ON THE RIGHT:" , data[1]);
+	printf("\n");
+}
+
 void handleColor(const char *buffer)
 {
 	int32_t data[16];
@@ -108,9 +118,13 @@ void handleNetwork(const char *buffer, int len)
 			handleCommand(buffer);
 			break;
 
+		case NET_USSENSOR_PACKET:
+			handleUS(buffer);
+			break;
+			
 		case NET_COLORSENSOR_PACKET:
-            handleColor(buffer);
-            break;
+            		handleColor(buffer);
+            		break;
 	}
 }
 
@@ -228,9 +242,18 @@ void *writerThread(void *conn)
 			case 'M':
 				params[0]=0;
 				params[1]=0;
-                memcpy(&buffer[2], params, sizeof(params));
-                buffer[1] = ch;
-                sendData(conn, buffer, sizeof(buffer));
+                		memcpy(&buffer[2], params, sizeof(params));
+                		buffer[1] = ch;
+                		sendData(conn, buffer, sizeof(buffer));
+				break;
+				
+			case 'Z':
+			case 'z':
+				params[0]=0;
+				params[1]=0;
+                		memcpy(&buffer[2], params, sizeof(params));
+                		buffer[1] = ch;
+                		sendData(conn, buffer, sizeof(buffer));
 				break;
 
 			default:
