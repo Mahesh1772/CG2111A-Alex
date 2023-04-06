@@ -61,7 +61,7 @@ void handleColor(TPacket *packet)
 	char data[65];
 	printf("UART COLOUR SENSOR PACKET\n");
 	data[0] = NET_COLORSENSOR_PACKET;
-	memcpy(&data[1], packet->data, sizeof(packet->data));
+	memcpy(&data[1], packet->params, sizeof(packet->params));
 	sendNetworkData(data, sizeof(data));
 }
 
@@ -102,6 +102,7 @@ void handleResponse(TPacket *packet)
 
 		case RESP_COLORSENSOR:
 			handleColor(packet);
+			break;
 		default:
 		printf("Boo\n");
 	}
