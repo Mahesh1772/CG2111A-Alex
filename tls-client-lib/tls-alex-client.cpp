@@ -109,8 +109,8 @@ void handleNetwork(const char *buffer, int len)
 			break;
 
 		case NET_COLORSENSOR_PACKET:
-                        handleCommand(buffer);
-                        break;
+            handleCommand(buffer);
+            break;
 	}
 }
 

@@ -282,7 +282,7 @@ void handleCommand(void *conn, const char *buffer)
 
 		case 'm':
 		case 'M':
-			commandPacket.command = COMMAND_GET_COLOR;
+			commandPacket.command = COMMAND_GET_COLORSENSOR;
 			uartSendPacket(&commandPacket);
 			break;
 		default:
