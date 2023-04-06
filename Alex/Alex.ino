@@ -106,7 +106,7 @@ long PulseTimeL = 0;
 long USDistL = 0;
 
 long PulseTimeR = 0;
-long USDistL = 0;
+long USDistR = 0;
 
 
 <<<<<<< HEAD
@@ -614,13 +614,52 @@ void right(float ang, float speed)
 
 void USsensor_setup()
 {
-  DDRC |= (RIGHT_TRIG_PIN | lEFT_TRIG_PIN);
+  DDRC |= (RIGHT_TRIG_PIN | LEFT_TRIG_PIN);
   DDRB &= (RIGHT_ECHO_PIN_BARE | LEFT_ECHO_PIN_BARE);
 }
 
 void USsensor_reading()
 {
-  
+  TPacket USPacket;
+  USPacket.packetType = PACKET_TYPE_RESPONSE;
+  USPacket.command = RESP_US_SENSOR;
+
+  //--------------------------------------------USING LEFT US------------------------------------------------
+  PORTC &= ~(LEFT_TRIG_PIN);
+  //Delay while pin is Low
+  delayMicroseconds(3);
+  //Set pin to high
+  PORTC |= LEFT_TRIG_PIN;
+  //Awaiting the US pulse
+  delayMicroseconds(10);
+  //Setting pin to low	
+  PORTC &= ~(LEFT_TRIG_PIN);
+
+  //Reading the pulse duration, calculating the distance based on the speed of sound
+  //Storing the distance calculated in the packet
+  PulseTimeL = pulseIn(LEFT_ECHO_PIN, HIGH);
+  USDistL = PulseTimeL * 0.034 / 2;
+  USPacket.params[1] = USDistL;
+
+
+  //--------------------------------------------USING LEFT US------------------------------------------------
+  PORTC &= ~(RIGHT_TRIG_PIN);
+  //Delay while pin is Low
+  delayMicroseconds(3);
+  //Set pin to high
+  PORTC |= RIGHT_TRIG_PIN;
+  //Awaiting the US pulse
+  delayMicroseconds(10);
+  //Setting pin to low	
+  PORTC &= ~(RIGHT_TRIG_PIN);
+
+  //Reading the pulse duration, calculating the distance based on the speed of sound
+  //Storing the distance calculated in the packet
+  PulseTimeR = pulseIn(RIGHT_ECHO_PIN, HIGH);
+  USDistR = PulseTimeR * 0.034 / 2;
+  USPacket.params[2] = USDistR;
+	
+  sendResponse(&USPacket);
 }
 
 void setupColor()
@@ -824,10 +863,13 @@ void handleCommand(TPacket *command)
 			sendOK();
 			break;
 
+		case COMMAND_GET_USS:
+			USsensor_reading();
+			break;
+			
 		case COMMAND_GET_COLOUR:
 			readColor();
 			break;
-
 
 			/*
 			   Implement code for other commands here.
@@ -886,6 +928,7 @@ void setup() {
 	startMotors();
 	enablePullups();
 	initializeState();
+	USsensor_setup();
 	setupColor();
 	sei();
 }
