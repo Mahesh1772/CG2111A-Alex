@@ -56,10 +56,19 @@ void handleErrorResponse(TPacket *packet)
 	sendNetworkData(buffer, sizeof(buffer));
 }
 
+void handleUS(TPacket *packet)
+{
+	char data[65];
+	printf("UART US SENSOR READING\n");
+	data[0] = NET_USSENSOR_PACKET;
+	memcpy(&data[1], packet->params, sizeof(packet->params));
+	sendNetworkData(data, sizeof(data));
+}
+
 void handleColor(TPacket *packet)
 {
 	char data[65];
-	printf("UART COLOUR SENSOR PACKET\n");
+	printf("UART COLOUR SENSOR RESULT\n");
 	data[0] = NET_COLORSENSOR_PACKET;
 	memcpy(&data[1], packet->params, sizeof(packet->params));
 	sendNetworkData(data, sizeof(data));
@@ -94,11 +103,15 @@ void handleResponse(TPacket *packet)
 			resp[0] = NET_ERROR_PACKET;
 			resp[1] = RESP_OK;
 			sendNetworkData(resp, sizeof(resp));
-		break;
+			break;
 
 		case RESP_STATUS:
 			handleStatus(packet);
-		break;
+			break;
+			
+		case RESP_US_SENSOR:
+			handleUS(packet);
+			break;
 
 		case RESP_COLORSENSOR:
 			handleColor(packet);
@@ -288,6 +301,13 @@ void handleCommand(void *conn, const char *buffer)
 			commandPacket.command = COMMAND_GET_COLORSENSOR;
 			uartSendPacket(&commandPacket);
 			break;
+			
+		case 'Z':
+		case 'z':
+			commandPacket.command = COMMAND_GET_USS;
+			uartSendPacket(&commandPacket);
+			break;
+			
 		default:
 			printf("Bad command\n");
 
