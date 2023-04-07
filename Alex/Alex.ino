@@ -1,17 +1,10 @@
-<<<<<<< HEAD
-=======
+
 #include "buffer.h"
->>>>>>> fa1c05a59bbccf496bf3f5199db4d9fbe46ec849
 #include <serialize.h>
 #include "packet.h"
 #include "constants.h"
 #include "stdarg.h"
 #include <math.h>
-<<<<<<< HEAD
-//#include "buffer.h"
-=======
-
->>>>>>> fa1c05a59bbccf496bf3f5199db4d9fbe46ec849
 
 typedef enum
 {
@@ -108,15 +101,11 @@ long USDistL = 0;
 long PulseTimeR = 0;
 long USDistR = 0;
 
-
-<<<<<<< HEAD
-=======
 #define BUFFER_LEN 129
 
 TBuffer _recvBuffer;
 TBuffer _xmitBuffer;
 
->>>>>>> fa1c05a59bbccf496bf3f5199db4d9fbe46ec849
 /*
 
    Alex Communication Routines.
@@ -359,11 +348,8 @@ ISR(USART_UDRE_vect)
 {
 	unsigned char data;
 	TBufferResult result;
-<<<<<<< HEAD
-	result = readBuffer(&_xmitBuffer. &data);
-=======
 	result = readBuffer(&_xmitBuffer, &data);
->>>>>>> fa1c05a59bbccf496bf3f5199db4d9fbe46ec849
+	//result = readBuffer(&_xmitBuffer, &data);
 
 	if (result == BUFFER_OK)
 	{
@@ -413,11 +399,7 @@ int readSerial(char *buffer)
 	//while (Serial.available())
 	//buffer[count++] = Serial.read();
 	TBufferResult result = BUFFER_OK;
-<<<<<<< HEAD
-	TBufferResult result = BUFFER_OK;
-=======
 
->>>>>>> fa1c05a59bbccf496bf3f5199db4d9fbe46ec849
 	for(count = 0; dataAvailable(&_recvBuffer) && result == BUFFER_OK; count +=1)
 	{
 		result = readBuffer(&_recvBuffer, (unsigned char*)&buffer[count]);
@@ -632,7 +614,7 @@ void USsensor_reading()
   PORTC |= LEFT_TRIG_PIN;
   //Awaiting the US pulse
   delayMicroseconds(10);
-  //Setting pin to low	
+  //Setting pin to low  
   PORTC &= ~(LEFT_TRIG_PIN);
 
   //Reading the pulse duration, calculating the distance based on the speed of sound
@@ -650,7 +632,7 @@ void USsensor_reading()
   PORTC |= RIGHT_TRIG_PIN;
   //Awaiting the US pulse
   delayMicroseconds(10);
-  //Setting pin to low	
+  //Setting pin to low  
   PORTC &= ~(RIGHT_TRIG_PIN);
 
   //Reading the pulse duration, calculating the distance based on the speed of sound
@@ -658,7 +640,7 @@ void USsensor_reading()
   PulseTimeR = pulseIn(RIGHT_ECHO_PIN, HIGH);
   USDistR = PulseTimeR * 0.034 / 2;
   USPacket.params[1] = USDistR;
-	
+  
   sendResponse(&USPacket);
 }
 
@@ -668,7 +650,7 @@ void setupColor()
 	//s2 and s3 to control the current color, hence set to output
 	//s0 and s1 control the frequency scalling, hence set to output
 	DDRC |= (S0 | S1);
-	DDRB |= (S3);
+  DDRB |= S3;
 	DDRD |= (S2);
 	DDRD &= ~(COLOR_OUT);
 
@@ -864,13 +846,14 @@ void handleCommand(TPacket *command)
 			sendOK();
 			break;
 
-		case COMMAND_GET_USS:
-			USsensor_reading();
-			break;
-			
+      case COMMAND_GET_USS:
+        USsensor_reading();
+        break;
+
 		case COMMAND_GET_COLOUR:
 			readColor();
 			break;
+
 
 			/*
 			   Implement code for other commands here.
@@ -929,7 +912,7 @@ void setup() {
 	startMotors();
 	enablePullups();
 	initializeState();
-	USsensor_setup();
+  USsensor_setup();
 	setupColor();
 	sei();
 }
@@ -1024,9 +1007,4 @@ void loop() {
 		}
 	}
 }
-<<<<<<< HEAD
 
-
-
-=======
->>>>>>> fa1c05a59bbccf496bf3f5199db4d9fbe46ec849

@@ -39,9 +39,7 @@ static volatile int networkActive;
 static void *tls_conn = NULL;
 
 /*
-
 	Alex Serial Routines to the Arduino
-
 	*/
 
 // Prototype for sendNetworkData
@@ -202,9 +200,7 @@ void *uartReceiveThread(void *p)
 }
 
 /*
-
 	Alex Network Routines
-
 	*/
 
 
