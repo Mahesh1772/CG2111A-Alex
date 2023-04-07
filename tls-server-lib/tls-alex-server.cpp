@@ -249,6 +249,30 @@ void handleCommand(void *conn, const char *buffer)
 	
 	switch(cmd)
 	{
+		case 'w':
+		case 'W':
+			commandPacket.command = COMMAND_FORWARD;
+			uartSendPacket(&commandPacket);
+			break;
+
+		case 's':
+		case 'S':
+			commandPacket.command = COMMAND_REVERSE;
+			uartSendPacket(&commandPacket);
+			break;
+
+		case 'd':
+		case 'D':
+			commandPacket.command = COMMAND_TURN_LEFT;
+			uartSendPacket(&commandPacket);
+			break;
+
+		case 'a':
+		case 'A':
+			commandPacket.command = COMMAND_TURN_RIGHT;
+			uartSendPacket(&commandPacket);
+			break;
+			
 		case 'f':
 		case 'F':
 			commandPacket.command = COMMAND_FORWARD;
@@ -273,8 +297,8 @@ void handleCommand(void *conn, const char *buffer)
 			uartSendPacket(&commandPacket);
 			break;
 
-		case 's':
-		case 'S':
+		case 'p':
+		case 'P':
 			commandPacket.command = COMMAND_STOP;
 			uartSendPacket(&commandPacket);
 			break;
