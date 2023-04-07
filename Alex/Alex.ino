@@ -642,7 +642,7 @@ void USsensor_reading()
   USPacket.params[0] = USDistL;
 
 
-  //--------------------------------------------USING LEFT US------------------------------------------------
+  //--------------------------------------------USING RIGHT US------------------------------------------------
   PORTC &= ~(RIGHT_TRIG_PIN);
   //Delay while pin is Low
   delayMicroseconds(3);
@@ -667,13 +667,14 @@ void setupColor()
 	//Set COLOR_OUT to input to get the color intensity which is read.
 	//s2 and s3 to control the current color, hence set to output
 	//s0 and s1 control the frequency scalling, hence set to output
-	DDRB |= (S0 | S1 | S3);
+	DDRC |= (S0 | S1);
+	DDRB |= (S3);
 	DDRD |= (S2);
 	DDRD &= ~(COLOR_OUT);
 
 	//Setting frequency scaling to a fixed level of 20%
-	PORTB |= S0;
-	PORTB &= ~(S1);
+	PORTC |= S0;
+	PORTC &= ~(S1);
 }
 
 void readColor()
