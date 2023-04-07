@@ -68,9 +68,11 @@ void handleUS(const char *buffer)
 {
 	int32_t data[16];
 	memcpy(data, &buffer[1], sizeof(data));
-	printf("DISTANCE ON THE LEFT:" , data[0]);
+	printf("DISTANCE ON THE LEFT:");
+	printf("%d",data[0]);
 	printf("\n");
-	printf("DISTANCE ON THE RIGHT:" , data[1]);
+	printf("DISTANCE ON THE RIGHT:");
+	printf("%d",data[1]);
 	printf("\n");
 }
 
@@ -195,7 +197,7 @@ void *writerThread(void *conn)
 	while(!quit)
 	{
 		char ch;
-		printf("Command (f=forward, b=reverse, l=turn left, r=turn right, m=color sensor, s=stop, c=clear stats, g=get stats q=exit)\n");
+		printf("Command (f=forward, b=reverse, l=turn left, r=turn right, m=color sensor, z=ultrasonic distance, s=stop, c=clear stats, g=get stats q=exit)\n");
 		scanf("%c", &ch);
 
 		// Purge extraneous characters from input stream
