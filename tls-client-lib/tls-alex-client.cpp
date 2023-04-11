@@ -189,6 +189,15 @@ void getParams(int32_t *params)
 	scanf("%d %d", &params[0], &params[1]);
 	flushInput();
 }
+void getWASDParams(int32_t *params)
+{
+	printf("Enter distance/angle in cm/degrees (e.g. 50) and power in %% (e.g. 75) separated by space.\n");
+	printf("E.g. 50 75 means go at 50 cm at 75%% power for forward/backward, or 50 degrees left or right turn at 75%%  power\n");
+	params[0] = 10;
+	params[1] = 100;
+	flushInput();
+}
+
 
 void *writerThread(void *conn)
 {
@@ -209,6 +218,25 @@ void *writerThread(void *conn)
 		buffer[0] = NET_COMMAND_PACKET;
 		switch(ch)
 		{
+			case 'w':
+			case 'W':
+			case 's':
+			case 'S':
+				getWASDParams(params);
+				buffer[1] = ch;
+				memcpy(&buffer[2], params, sizeof(params));
+				sendData(conn, buffer, sizeof(buffer));
+				break;
+			case 'a':
+			case 'A':
+			case 'd':
+			case 'D':
+				getWASDParams(params);
+				buffer[1] = ch;
+				memcpy(&buffer[2], params, sizeof(params));
+				sendData(conn, buffer, sizeof(buffer));
+				break;
+
 			case 'f':
 			case 'F':
 			case 'b':
@@ -222,8 +250,8 @@ void *writerThread(void *conn)
 				memcpy(&buffer[2], params, sizeof(params));
 				sendData(conn, buffer, sizeof(buffer));
 				break;
-			case 's':
-			case 'S':
+			case 'p':
+			case 'P':
 			case 'c':
 			case 'C':
 			case 'g':
