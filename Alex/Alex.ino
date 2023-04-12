@@ -1,3 +1,5 @@
+#include "buffer.h"
+
 #include <serialize.h>
 #include "packet.h"
 #include "constants.h"
@@ -36,6 +38,7 @@ volatile TDirection dir = STOP;
 #define LR                  5   // Left reverse pin
 #define RF                  10  // Right forward pin
 #define RR                  11  // Right reverse pin
+
 #define ALEX_LENGTH 15
 #define ALEX_BREADTH 10
 
@@ -61,7 +64,7 @@ long USDistL;
 double PulseTimeR;
 long USDistR;
 
-define Buffer_max_length 129
+#define Buffer_max_length 129
 
 TBuffer BUFFER_RECEIVED;
 TBuffer BUFFER_TRANSFERED;
@@ -325,26 +328,26 @@ ISR(INT1_vect)
   rightISR();
 }
 
-SR(USART_RX_vect) 
+ISR(USART_RX_vect) 
 {
-	unsigned char data = UDR0;
-	writeBuffer(&BUFFER_RECEIVED, data);
+  unsigned char data = UDR0;
+  writeBuffer(&BUFFER_RECEIVED, data);
 }
 
 ISR(USART_UDRE_vect)
 {
-	unsigned char data;
-	TBufferResult status;
-	status = readBuffer(&BUFFER_TRANSFERED. &data);
+  unsigned char data;
+  TBufferResult status;
+  status = readBuffer(&BUFFER_TRANSFERED, &data);
 
-	if (status == BUFFER_OK)
-	{
-		UDR0 = data;
-	}
-	else if (status == BUFFER_EMPTY)
-	{
-		UCSR0B &= 0b11011111;
-	}
+  if (status == BUFFER_OK)
+  {
+    UDR0 = data;
+  }
+  else if (status == BUFFER_EMPTY)
+  {
+    UCSR0B &= 0b11011111;
+  }
 }
 
 // Implement INT0 and INT1 ISRs above.
@@ -359,16 +362,16 @@ ISR(USART_UDRE_vect)
 void setupSerial()
 {
   // To replace later with bare-metal.
-  //Serial.begin(9600);	
+  //Serial.begin(9600); 
   initBuffer(&BUFFER_RECEIVED, Buffer_max_length);
-	initBuffer(&BUFFER_TRANSFERED, Buffer_max_length);
+  initBuffer(&BUFFER_TRANSFERED, Buffer_max_length);
 
-	UBRR0L = 103;
-	UBRR0H = 0;
+  UBRR0L = 103;
+  UBRR0H = 0;
 
-	UCSR0C = 0b00000110;
+  UCSR0C = 0b00000110;
 
-	UCSR0A = 0;
+  UCSR0A = 0;
   
 }
 
@@ -380,7 +383,7 @@ void startSerial()
 {
   // Empty for now. To be replaced with bare-metal code
   // later on.
-	UCSR0B = 0b10111000;
+  UCSR0B = 0b10111000;
 }
 
 // Read the serial port. Returns the read character in
@@ -390,12 +393,12 @@ void startSerial()
 int readSerial(char *buffer)
 {
 
-  int count = 0;	
+  int count = 0;  
   TBufferResult status = BUFFER_OK;
-	for(count = 0; dataAvailable(&BUFFER_RECEIVED) && status == BUFFER_OK; count +=1)
-	{
-		status = readBuffer(&BUFFER_RECEIVED, (unsigned char*)&buffer[count]);
-	}
+  for(count = 0; dataAvailable(&BUFFER_RECEIVED) && status == BUFFER_OK; count +=1)
+  {
+    status = readBuffer(&BUFFER_RECEIVED, (unsigned char*)&buffer[count]);
+  }
 
   //while (Serial.available())
     //buffer[count++] = Serial.read();
@@ -409,16 +412,16 @@ int readSerial(char *buffer)
 void writeSerial(const char *buffer, int len)
 {
   //Serial.write(buffer, len);
-  	TBufferResult status = BUFFER_OK;
-	for (int count = 1; count < len && status == BUFFER_OK; count++)
-	{
-		status = writeBuffer(&BUFFER_TRANSFERED, buffer[count]);
-	}
+    TBufferResult status = BUFFER_OK;
+  for (int count = 1; count < len && status == BUFFER_OK; count++)
+  {
+    status = writeBuffer(&BUFFER_TRANSFERED, buffer[count]);
+  }
 
-	UDR0 = buffer[0];
+  UDR0 = buffer[0];
 
-	//Enabling UDRE interrupt
-	UCSR0B |= 0b00100000;
+  //Enabling UDRE interrupt
+  UCSR0B |= 0b00100000;
 }
 
 /*
@@ -1007,6 +1010,7 @@ void loop() {
     }
   }
 }
+
 
 
 
