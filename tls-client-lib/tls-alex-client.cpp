@@ -80,9 +80,9 @@ void handleColor(const char *buffer)
 {
 	int32_t data[16];
 	memcpy(data, &buffer[1], sizeof(data));
-	printf("RED: \t%d"data[0]);
-	printf("BLUE: \t%d"data[1]);
-	printf("GREEN: \t%d"data[2]);
+	printf("RED: \t%d", data[0]);
+	printf("BLUE: \t%d", data[1]);
+	printf("GREEN: \t%d", data[2]);
 
 	if(data[3] == 1)
 	{
