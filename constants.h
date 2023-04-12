@@ -26,7 +26,8 @@ typedef enum
   RESP_BAD_CHECKSUM = 3,
   RESP_BAD_COMMAND = 4,
   RESP_BAD_RESPONSE = 5,
-  RESP_COLORSENSOR = 6
+  RESP_US_SENSOR = 6,
+  RESP_COLORSENSOR = 7
 } TResponseType;
 
 
@@ -42,7 +43,8 @@ typedef enum
   COMMAND_STOP = 4,
   COMMAND_GET_STATS = 5,
   COMMAND_CLEAR_STATS = 6,
-  COMMAND_GET_COLOUR = 7
+  COMMAND_GET_USS = 7,
+  COMMAND_GET_COLOUR = 8
 } TCommandType;
 #endif
 

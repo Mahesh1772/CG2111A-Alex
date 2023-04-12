@@ -45,6 +45,21 @@ volatile TDirection dir = STOP;
 #define S3 0b00000001 // pin 8 port B pin 0
 #define S2 0b00010000 // Pin 4 port D pin 4
 #define COLOR_OUT 0b10000000 // Pin 7 port D pin 7
+//US VARIABLE definition
+#define RIGHT_TRIG_PIN 0b00001000 // pin A3 port C pin 3
+#define LEFT_TRIG_PIN  0b00000100 // pin A2 port C pin 2
+
+#define RIGHT_ECHO_PIN       12// pin 12 port B pin 4   
+#define RIGHT_ECHO_PIN_BARE  0b00010000
+
+#define LEFT_ECHO_PIN        13// pin 13 port B Pin 5
+#define LEFT_ECHO_PIN_BARE   0b00100000
+
+double PulseTimeL;
+long USDistL;
+
+double PulseTimeR;
+long USDistR;
 
 int frequency = 0;
 float alexDiagonal = 0.0;
@@ -592,7 +607,60 @@ void readColor()
 
 }
 
+void USsensor_setup()
+{
+  DDRC |= (RIGHT_TRIG_PIN | LEFT_TRIG_PIN);
+  DDRB &= (RIGHT_ECHO_PIN_BARE | LEFT_ECHO_PIN_BARE);
+}
 
+void USsensor_reading()
+{
+  TPacket USPacket;
+  USPacket.packetType = PACKET_TYPE_RESPONSE;
+  USPacket.command = RESP_US_SENSOR;
+  
+  //--------------------------------------------USING LEFT US------------------------------------------------
+  PORTC &= ~(LEFT_TRIG_PIN);
+  //Delay while pin is Low
+  delayMicroseconds(3);
+  //Set pin to high
+  PORTC |= LEFT_TRIG_PIN;
+  //Awaiting the US pulse
+  delayMicroseconds(10);
+  //Setting pin to low  
+  PORTC &= ~(LEFT_TRIG_PIN);
+
+  //Reading the pulse duration, calculating the distance based on the speed of sound
+  //Storing the distance calculated in the packet
+  PulseTimeL = pulseIn(LEFT_ECHO_PIN, HIGH);
+  USDistL = PulseTimeL * 0.034 / 2;
+  USPacket.params[0] = USDistL;
+
+
+  //--------------------------------------------USING RIGHT US------------------------------------------------
+  PORTC &= ~(RIGHT_TRIG_PIN);
+  //Delay while pin is Low
+  delayMicroseconds(3);
+  //Set pin to high
+  PORTC |= RIGHT_TRIG_PIN;
+  //Awaiting the US pulse
+  delayMicroseconds(10);
+  //Setting pin to low  
+  PORTC &= ~(RIGHT_TRIG_PIN);
+
+  //Reading the pulse duration, calculating the distance based on the speed of sound
+  //Storing the distance calculated in the packet
+  PulseTimeR = pulseIn(RIGHT_ECHO_PIN, HIGH);
+  USDistR = PulseTimeR * 0.034 / 2;
+  USPacket.params[1] = USDistR;
+  
+  sendResponse(&USPacket);
+
+  /*Serial.print("Left Ultrasonic: ");
+  Serial.println(USDistL)
+  Serial.print("Right Ultrasonic: ");
+  Serial.println(USDistR);*/
+}
 /*
   void right(float ang, float speed)
   {
@@ -731,7 +799,10 @@ void handleCommand(TPacket *command)
     case COMMAND_GET_COLOUR:
       readColor();
       break;
-    
+      
+    case COMMAND_GET_USS:
+      USsensor_reading();
+      break;
 
     /*
        Implement code for other commands here.
@@ -789,8 +860,10 @@ void setup() {
   setupMotors();
   startMotors();
   enablePullups();
-  initializeState();
+  
   setupColor();
+  USsensor_setup();
+  initializeState();
   sei();
 }
 
