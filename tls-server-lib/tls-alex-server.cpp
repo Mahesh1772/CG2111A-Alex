@@ -58,6 +58,8 @@ void handleUS(TPacket *packet)
 {
 	char data[65];
 	printf("UART US SENSOR READING\n");
+	printf("%d\n", packet->params[1]);
+	printf("test\n");
 	data[0] = NET_USSENSOR_PACKET;
 	memcpy(&data[1], packet->params, sizeof(packet->params));
 	sendNetworkData(data, sizeof(data));
