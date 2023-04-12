@@ -39,6 +39,11 @@ volatile TDirection dir = STOP;
 #define RF                  10  // Right forward pin
 #define RR                  11  // Right reverse pin
 
+#define LF_TIMER OCR0B
+#define LR_TIMER OCR0A
+#define RF_TIMER OCR1B
+#define RR_TIMER OCR2A
+
 #define ALEX_LENGTH 15
 #define ALEX_BREADTH 10
 
@@ -440,6 +445,20 @@ void setupMotors()
         B1IN - Pin 10, PB2, OC1B
         B2In - pIN 11, PB3, OC2A
   */
+  // prescaler = 256
+  // PWM, phase correct
+  TCCR0A = 0b00000001;
+  TCCR0B = 0b00000100;
+  TCNT0 = 0;
+  TCCR2A = 0b00000001;
+  TCCR2B = 0b00000100;
+  TCNT2 = 0;
+
+  // PWM, phase correct, 8-bit
+  // prescaler = 256
+  TCCR1A =  0b00000001;
+  TCCR1B = 0b00000100;
+  TCNT1 = 0;
 }
 
 // Start the PWM for Alex's motors.
@@ -447,7 +466,21 @@ void setupMotors()
 // blank.
 void startMotors()
 {
+  // Setting pins 5 and 6 to output
+  // Setting pins 10 and 11 to output
+  DDRD |= 0b01100000;
+  DDRB |= 0b00001100;
+  // enabling LR and LF
+  TCCR0A |= 0b10100000;
+  // enabling RF
+  TCCR1A |= 0b00100000;
+  // enabling RR
+  TCCR2A |= 0b10000000;
 
+  LF_TIMER = 0;
+  RF_TIMER = 0;
+  LR_TIMER = 0;
+  RR_TIMER = 0;
 }
 
 // Convert percentages to PWM values
@@ -487,10 +520,14 @@ void forward(float dist, float speed)
   // RF = Right forward pin, RR = Right reverse pin
   // This will be replaced later with bare-metal code.
 
-  analogWrite(LF, val*0.945);
+  LF_TIMER = val;
+  RF_TIMER = val;
+
+  
+  /*analogWrite(LF, val*0.945);
   analogWrite(RF, val);
   analogWrite(LR, 0);
-  analogWrite(RR, 0);
+  analogWrite(RR, 0);*/
 }
 
 // Reverse Alex "dist" cm at speed "speed".
@@ -513,14 +550,17 @@ void reverse(float dist, float speed)
   // For now we will ignore dist and
   // reverse indefinitely. We will fix this
   // in Week 9.
+  
+  LR_TIMER = val;
+  RR_TIMER = val;
 
   // LF = Left forward pin, LR = Left reverse pin
   // RF = Right forward pin, RR = Right reverse pin
   // This will be replaced later with bare-metal code.
-  analogWrite(LR, val);
+  /*analogWrite(LR, val);
   analogWrite(RR, val);
   analogWrite(LF, 0);
-  analogWrite(RF, 0);
+  analogWrite(RF, 0);*/
 }
 
 unsigned long computeDeltaTicks(float ang) {
@@ -549,10 +589,14 @@ void left(float ang, float speed)
   // We will also replace this code with bare-metal later.
   // To turn left we reverse the left wheel and move
   // the right wheel forward.
-  analogWrite(LR, val);
+  
+  LR_TIMER = val;
+  RF_TIMER = val;
+  
+  /*analogWrite(LR, val);
   analogWrite(RF, val);
   analogWrite(LF, 0);
-  analogWrite(RR, 0);
+  analogWrite(RR, 0);*/
 }
 
 // Turn Alex right "ang" degrees at speed "speed".
@@ -576,10 +620,14 @@ void right(float ang, float speed)
   // We will also replace this code with bare-metal later.
   // To turn left we reverse the left wheel and move
   // the right wheel forward.
-  analogWrite(RR, val);
+  
+  LF_TIMER = val;
+  RR_TIMER = val;
+  
+  /*analogWrite(RR, val);
   analogWrite(LF, val);
   analogWrite(LR, 0);
-  analogWrite(RF, 0);
+  analogWrite(RF, 0);*/
 }
 /*
   void sensecolour() {
@@ -742,10 +790,15 @@ void USsensor_reading()
 void stop()
 {
   dir = STOP;
-  analogWrite(LF, 0);
+  /*analogWrite(LF, 0);
   analogWrite(LR, 0);
   analogWrite(RF, 0);
-  analogWrite(RR, 0);
+  analogWrite(RR, 0);*/
+  LF_TIMER = 0;
+  RF_TIMER = 0;
+  LR_TIMER = 0;
+  RR_TIMER = 0;
+  
 }
 
 /*
