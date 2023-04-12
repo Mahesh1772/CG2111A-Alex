@@ -64,31 +64,10 @@ void handleMessage(const char *buffer)
 	printf("MESSAGE FROM ALEX: %s\n", &buffer[1]);
 }
 
-void handleUS(const char *buffer)
-{
-	int32_t data[16];
-	memcpy(data, &buffer[1], sizeof(data));
-	printf("DISTANCE ON THE LEFT:");
-	printf("%d",data[0]);
-	printf("\n");
-	printf("DISTANCE ON THE RIGHT:");
-	printf("%d",data[1]);
-	printf("\n");
-}
-
 void handleColor(const char *buffer)
 {
 	int32_t data[16];
 	memcpy(data, &buffer[1], sizeof(data));
-	printf("RED VALUE ");
-	printf("%d",data[0]);
-	printf("\n");
-	printf("GREEN VALUE ");
-	printf("%d",data[1]);
-	printf("\n");
-	printf("BLUE VALUE ");
-	printf("%d",data[2]);
-	printf("\n");
 	if(data[3] == 1)
 	{
 		printf("RED\n");
@@ -129,12 +108,8 @@ void handleNetwork(const char *buffer, int len)
 			handleCommand(buffer);
 			break;
 
-		case NET_USSENSOR_PACKET:
-			handleUS(buffer);
-			break;
-			
 		case NET_COLORSENSOR_PACKET:
-            handleColor(buffer);
+            handleCommand(buffer);
             break;
 	}
 }
@@ -198,16 +173,6 @@ void getParams(int32_t *params)
 	scanf("%d %d", &params[0], &params[1]);
 	flushInput();
 }
-void getWASDParams(int32_t *params)
-{
-	//printf("Enter distance/angle in cm/degrees (e.g. 50) and power in %% (e.g. 75) separated by space.\n");
-	//printf("E.g. 50 75 means go at 50 cm at 75%% power for forward/backward, or 50 degrees left or right turn at 75%%  power\n");
-	printf("HIT ENTER");
-	params[0] = 10;
-	params[1] = 100;
-	flushInput();
-}
-
 
 void *writerThread(void *conn)
 {
@@ -216,7 +181,7 @@ void *writerThread(void *conn)
 	while(!quit)
 	{
 		char ch;
-		printf("Command (f=forward, b=reverse, l=turn left, r=turn right, m=color sensor, z=ultrasonic distance, s=stop, c=clear stats, g=get stats q=exit)\n");
+		printf("Command (f=forward, b=reverse, l=turn left, r=turn right, m=color sensor, s=stop, c=clear stats, g=get stats q=exit)\n");
 		scanf("%c", &ch);
 
 		// Purge extraneous characters from input stream
@@ -228,37 +193,6 @@ void *writerThread(void *conn)
 		buffer[0] = NET_COMMAND_PACKET;
 		switch(ch)
 		{
-			case 'w':
-			case 'W':
-			case 's':
-			case 'S':
-				/*getWASDParams(params);
-				buffer[1] = ch;
-				memcpy(&buffer[2], params, sizeof(params));
-				sendData(conn, buffer, sizeof(buffer));
-				break;*/
-				params[0]=10;
-				params[1]=100;
-                memcpy(&buffer[2], params, sizeof(params));
-                buffer[1] = ch;
-                sendData(conn, buffer, sizeof(buffer));
-				break;
-			case 'a':
-			case 'A':
-			case 'd':
-			case 'D':
-				/*getWASDParams(params);
-				buffer[1] = ch;
-				memcpy(&buffer[2], params, sizeof(params));
-				sendData(conn, buffer, sizeof(buffer));
-				break;*/
-				params[0]=10;
-				params[1]=100;
-                memcpy(&buffer[2], params, sizeof(params));
-                buffer[1] = ch;
-                sendData(conn, buffer, sizeof(buffer));
-				break;
-
 			case 'f':
 			case 'F':
 			case 'b':
@@ -272,8 +206,8 @@ void *writerThread(void *conn)
 				memcpy(&buffer[2], params, sizeof(params));
 				sendData(conn, buffer, sizeof(buffer));
 				break;
-			case 'p':
-			case 'P':
+			case 's':
+			case 'S':
 			case 'c':
 			case 'C':
 			case 'g':
@@ -292,15 +226,6 @@ void *writerThread(void *conn)
 
 			case 'm':
 			case 'M':
-				params[0]=0;
-				params[1]=0;
-                memcpy(&buffer[2], params, sizeof(params));
-                buffer[1] = ch;
-                sendData(conn, buffer, sizeof(buffer));
-				break;
-				
-			case 'Z':
-			case 'z':
 				params[0]=0;
 				params[1]=0;
                 memcpy(&buffer[2], params, sizeof(params));

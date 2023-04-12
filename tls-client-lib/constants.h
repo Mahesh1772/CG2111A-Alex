@@ -47,3 +47,4 @@ typedef enum
   COMMAND_GET_COLORSENSOR = 8
 } TCommandType;
 #endif
+

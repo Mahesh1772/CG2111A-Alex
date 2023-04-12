@@ -80,10 +80,15 @@ void handleColor(const char *buffer)
 {
 	int32_t data[16];
 	memcpy(data, &buffer[1], sizeof(data));
-	printf("RED: \t%d", data[0]);
-	printf("BLUE: \t%d", data[1]);
-	printf("GREEN: \t%d", data[2]);
-
+	printf("RED VALUE ");
+	printf("%d",data[0]);
+	printf("\n");
+	printf("GREEN VALUE ");
+	printf("%d",data[1]);
+	printf("\n");
+	printf("BLUE VALUE ");
+	printf("%d",data[2]);
+	printf("\n");
 	if(data[3] == 1)
 	{
 		printf("RED\n");
@@ -195,8 +200,9 @@ void getParams(int32_t *params)
 }
 void getWASDParams(int32_t *params)
 {
-	printf("Enter distance/angle in cm/degrees (e.g. 50) and power in %% (e.g. 75) separated by space.\n");
-	printf("E.g. 50 75 means go at 50 cm at 75%% power for forward/backward, or 50 degrees left or right turn at 75%%  power\n");
+	//printf("Enter distance/angle in cm/degrees (e.g. 50) and power in %% (e.g. 75) separated by space.\n");
+	//printf("E.g. 50 75 means go at 50 cm at 75%% power for forward/backward, or 50 degrees left or right turn at 75%%  power\n");
+	printf("HIT ENTER");
 	params[0] = 10;
 	params[1] = 100;
 	flushInput();
@@ -226,22 +232,33 @@ void *writerThread(void *conn)
 			case 'W':
 			case 's':
 			case 'S':
-			//getWASDParams(params);
-			//buffer[1] = ch;
-			//memcpy(&buffer[2], params, sizeof(params));
-			//sendData(conn, buffer, sizeof(buffer));
-			//break;
+				/*getWASDParams(params);
+				buffer[1] = ch;
+				memcpy(&buffer[2], params, sizeof(params));
+				sendData(conn, buffer, sizeof(buffer));
+				break;*/
+				params[0]=10;
+				params[1]=100;
+                memcpy(&buffer[2], params, sizeof(params));
+                buffer[1] = ch;
+                sendData(conn, buffer, sizeof(buffer));
+				break;
 			case 'a':
 			case 'A':
 			case 'd':
 			case 'D':
+				/*getWASDParams(params);
+				buffer[1] = ch;
+				memcpy(&buffer[2], params, sizeof(params));
+				sendData(conn, buffer, sizeof(buffer));
+				break;*/
 				params[0]=10;
 				params[1]=100;
-				memcpy(&buffer[2], params, sizeof(params));
-				buffer[1] = ch;
-				sendData(conn, buffer, sizeof(buffer));
+                memcpy(&buffer[2], params, sizeof(params));
+                buffer[1] = ch;
+                sendData(conn, buffer, sizeof(buffer));
 				break;
-				
+
 			case 'f':
 			case 'F':
 			case 'b':
@@ -277,18 +294,18 @@ void *writerThread(void *conn)
 			case 'M':
 				params[0]=0;
 				params[1]=0;
-                		memcpy(&buffer[2], params, sizeof(params));
-                		buffer[1] = ch;
-                		sendData(conn, buffer, sizeof(buffer));
+                memcpy(&buffer[2], params, sizeof(params));
+                buffer[1] = ch;
+                sendData(conn, buffer, sizeof(buffer));
 				break;
 				
 			case 'Z':
 			case 'z':
-				params[0]=0;
-				params[1]=0;
-                		memcpy(&buffer[2], params, sizeof(params));
-                		buffer[1] = ch;
-                		sendData(conn, buffer, sizeof(buffer));
+				//params[0]=0;
+				//params[1]=0;
+                memcpy(&buffer[2], params, sizeof(params));
+                buffer[1] = ch;
+                sendData(conn, buffer, sizeof(buffer));
 				break;
 
 			default:
