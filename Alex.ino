@@ -319,7 +319,11 @@ ISR(INT1_vect)
 {
   rightISR();
 }
-
+//microsec is controlled this way
+ISR(TIMER2_COMPA_vect) 
+{
+  microsec += 4;
+}
 
 
 // Implement INT0 and INT1 ISRs above.
@@ -613,7 +617,7 @@ void USsensor_setup()
   DDRB &= (RIGHT_ECHO_PIN_BARE | LEFT_ECHO_PIN_BARE);
 }
 
-void USsensor_reading()
+/*void USsensor_reading()
 {
   TPacket USPacket;
   USPacket.packetType = PACKET_TYPE_RESPONSE;
@@ -660,7 +664,33 @@ void USsensor_reading()
   Serial.println(USDistL)
   Serial.print("Right Ultrasonic: ");
   Serial.println(USDistR);*/
+}*/
+  
+  void getUltrasonic() 
+{
+  unsigned long response_time = 0;  //store duration of echo pulse
+  unsigned long echo_start;  //store start time of echo pulse
+  bool echo_detect = 0;  //flag to set when start of echo pulse detected
+  bool valid_read = 0;  // flag to set when reading is taken
+
+  PORTC |= LEFT_TRIG_PIN; // set trigger pin
+  unsigned long pulse_start = microsec;  // get start of pulse timing
+  while (microsec < pulse_start + 10);  // basically sleep for the duration of the pulse
+  PORTC &= ~LEFT_TRIG_PIN;  //clear trigger pin
+  while (!valid_read && (microsec < pulse_start + ULTRASONIC_TIMEOUT)) {  // while ultrasonc reaading not done not timeout
+    if (!echo_detect && ((PINB & LEFT_ECHO_PIN_BARE) == LEFT_ECHO_PIN_BARE)) {  // if echo pulse detected
+       echo_start = microsec;  //get start time of echo pulse
+       echo_detect = 1;  //set flag that pulse detected
+    }
+    if (echo_detect && ((PINB & LEFT_ECHO_PIN_BARE) == 0b00000000)) {  // if echo pulse ended
+      valid_read = 1;  //set flag that reading complete
+      response_time = microsec - echo_start;  //calculate duration of echo pulse
+    }
+  }
+
+  //send packet
 }
+  
 /*
   void right(float ang, float speed)
   {
@@ -849,6 +879,16 @@ void waitForHello()
   } // !exit
 }
 
+void setup_timer2()
+{
+  TCCR2A = 0; // Clear Timer 2 control registers
+  TCCR2B = 0;
+  TCNT2 = 0; // Initialize counter value to 0
+  OCR2A = 3; // Set the compare match value (3+1)*2 = 8 cycles (4 microseconds)
+  TCCR2B |= (1 << CS21); // Set the prescaler to 8, so the clock runs at 16MHz/8 = 2MHz
+  TIMSK2 |= (1 << OCIE2A); // Enable Timer 2 compare match interrupt
+}
+
 void setup() {
   // put your setup code here, to run once:
   alexDiagonal = sqrt ((ALEX_LENGTH * ALEX_LENGTH) + (ALEX_BREADTH * ALEX_BREADTH));
@@ -860,7 +900,7 @@ void setup() {
   setupMotors();
   startMotors();
   enablePullups();
-  
+  setup_timer2();
   setupColor();
   USsensor_setup();
   initializeState();
