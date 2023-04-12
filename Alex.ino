@@ -62,7 +62,7 @@ double PulseTimeR;
 long USDistR;
 
 volatile long microsec;
-#define ULTRASONIC_TIMEOUT 6
+#define ULTRASONIC_TIMEOUT 100000
 
 int frequency = 0;
 float alexDiagonal = 0.0;
@@ -841,13 +841,32 @@ void waitForHello()
 
 void setup_timer2()
 {
-  TCCR2A = 0; // Clear Timer 2 control registers
-  TCCR2B = 0;
+  TCCR2A = 0b10; // set to CTC mode
   TCNT2 = 0; // Initialize counter value to 0
-  OCR2A = 3; // Set the compare match value (3+1)*2 = 8 cycles (4 microseconds)
-  TCCR2B |= (1 << CS21); // Set the prescaler to 8, so the clock runs at 16MHz/8 = 2MHz
-  TIMSK2 |= (1 << OCIE2A); // Enable Timer 2 compare match interrupt
+  OCR2A = 7; // Set the compare match value (3+1)*2 = 8 cycles (4 microseconds)
+  TCCR2B = 0b10; // Set the prescaler to 8, so the clock runs at 16MHz/8 = 2MHz
+  TIMSK2 = 0b10; // Enable when value meets OCR2A
+  TCCR2B = 0b10;
+  microsec = 0;
 }
+
+void setupTimer() { 
+   TCNT0 = 0; 
+   TCCR0A = 0b00000010; 
+   OCR0A = 7; 
+   TIMSK0 = 0b00000010; 
+   TCCR0B = 0b00000010; 
+   microsec = 0; 
+ } 
+  
+ ISR(TIMER0_COMPA_vect) { 
+   microsec += 4; 
+ } 
+  
+ void setupUltrasonic() { 
+   DDRB |= 0b00000010; 
+   DDRB &= 0b11111110; 
+ }
 
 void setup() {
   // put your setup code here, to run once:
