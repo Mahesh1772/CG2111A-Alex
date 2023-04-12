@@ -35,7 +35,7 @@ volatile TDirection dir = STOP;
 #define LF                  6   // Left forward pin
 #define LR                  5   // Left reverse pin
 #define RF                  10  // Right forward pin
-#define RR                  11  // Right reverse pin
+#define RR                  9  // Right reverse pin
 #define ALEX_LENGTH 15
 #define ALEX_BREADTH 10
 
