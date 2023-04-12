@@ -80,6 +80,10 @@ void handleColor(const char *buffer)
 {
 	int32_t data[16];
 	memcpy(data, &buffer[1], sizeof(data));
+	printf("RED: \t%d"data[0]);
+	printf("BLUE: \t%d"data[1]);
+	printf("GREEN: \t%d"data[2]);
+
 	if(data[3] == 1)
 	{
 		printf("RED\n");
@@ -125,8 +129,8 @@ void handleNetwork(const char *buffer, int len)
 			break;
 			
 		case NET_COLORSENSOR_PACKET:
-            		handleColor(buffer);
-            		break;
+            handleColor(buffer);
+            break;
 	}
 }
 
@@ -222,21 +226,22 @@ void *writerThread(void *conn)
 			case 'W':
 			case 's':
 			case 'S':
-				getWASDParams(params);
-				buffer[1] = ch;
-				memcpy(&buffer[2], params, sizeof(params));
-				sendData(conn, buffer, sizeof(buffer));
-				break;
+			//getWASDParams(params);
+			//buffer[1] = ch;
+			//memcpy(&buffer[2], params, sizeof(params));
+			//sendData(conn, buffer, sizeof(buffer));
+			//break;
 			case 'a':
 			case 'A':
 			case 'd':
 			case 'D':
-				getWASDParams(params);
-				buffer[1] = ch;
+				params[0]=10;
+				params[1]=100;
 				memcpy(&buffer[2], params, sizeof(params));
+				buffer[1] = ch;
 				sendData(conn, buffer, sizeof(buffer));
 				break;
-
+				
 			case 'f':
 			case 'F':
 			case 'b':
