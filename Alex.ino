@@ -61,6 +61,9 @@ long USDistL;
 double PulseTimeR;
 long USDistR;
 
+volatile long microsec;
+#define ULTRASONIC_TIMEOUT 6
+
 int frequency = 0;
 float alexDiagonal = 0.0;
 float alexCirc = 0.0;
@@ -320,7 +323,7 @@ ISR(INT1_vect)
   rightISR();
 }
 //microsec is controlled this way
-ISR(TIMER2_COMPA_vect) 
+ISR(TIMER2_COMPA_vect)
 {
   microsec += 4;
 }
@@ -438,7 +441,7 @@ void forward(float dist, float speed)
   // RF = Right forward pin, RR = Right reverse pin
   // This will be replaced later with bare-metal code.
 
-  analogWrite(LF, val*0.945);
+  analogWrite(LF, val * 0.945);
   analogWrite(RF, val);
   analogWrite(LR, 0);
   analogWrite(RR, 0);
@@ -617,70 +620,22 @@ void USsensor_setup()
   DDRB &= (RIGHT_ECHO_PIN_BARE | LEFT_ECHO_PIN_BARE);
 }
 
-/*void USsensor_reading()
-{
-  TPacket USPacket;
-  USPacket.packetType = PACKET_TYPE_RESPONSE;
-  USPacket.command = RESP_US_SENSOR;
-  
-  //--------------------------------------------USING LEFT US------------------------------------------------
-  PORTC &= ~(LEFT_TRIG_PIN);
-  //Delay while pin is Low
-  delayMicroseconds(3);
-  //Set pin to high
-  PORTC |= LEFT_TRIG_PIN;
-  //Awaiting the US pulse
-  delayMicroseconds(10);
-  //Setting pin to low  
-  PORTC &= ~(LEFT_TRIG_PIN);
 
-  //Reading the pulse duration, calculating the distance based on the speed of sound
-  //Storing the distance calculated in the packet
-  PulseTimeL = pulseIn(LEFT_ECHO_PIN, HIGH);
-  USDistL = PulseTimeL * 0.034 / 2;
-  USPacket.params[0] = USDistL;
-
-
-  //--------------------------------------------USING RIGHT US------------------------------------------------
-  PORTC &= ~(RIGHT_TRIG_PIN);
-  //Delay while pin is Low
-  delayMicroseconds(3);
-  //Set pin to high
-  PORTC |= RIGHT_TRIG_PIN;
-  //Awaiting the US pulse
-  delayMicroseconds(10);
-  //Setting pin to low  
-  PORTC &= ~(RIGHT_TRIG_PIN);
-
-  //Reading the pulse duration, calculating the distance based on the speed of sound
-  //Storing the distance calculated in the packet
-  PulseTimeR = pulseIn(RIGHT_ECHO_PIN, HIGH);
-  USDistR = PulseTimeR * 0.034 / 2;
-  USPacket.params[1] = USDistR;
-  
-  sendResponse(&USPacket);
-
-  /*Serial.print("Left Ultrasonic: ");
-  Serial.println(USDistL)
-  Serial.print("Right Ultrasonic: ");
-  Serial.println(USDistR);*/
-}*/
-  
-  void getUltrasonic() 
+void getUltrasonic()
 {
   unsigned long response_time = 0;  //store duration of echo pulse
   unsigned long echo_start;  //store start time of echo pulse
   bool echo_detect = 0;  //flag to set when start of echo pulse detected
   bool valid_read = 0;  // flag to set when reading is taken
-
+  //------------------LEFT------------------------------------------------------------
   PORTC |= LEFT_TRIG_PIN; // set trigger pin
   unsigned long pulse_start = microsec;  // get start of pulse timing
   while (microsec < pulse_start + 10);  // basically sleep for the duration of the pulse
   PORTC &= ~LEFT_TRIG_PIN;  //clear trigger pin
   while (!valid_read && (microsec < pulse_start + ULTRASONIC_TIMEOUT)) {  // while ultrasonc reaading not done not timeout
     if (!echo_detect && ((PINB & LEFT_ECHO_PIN_BARE) == LEFT_ECHO_PIN_BARE)) {  // if echo pulse detected
-       echo_start = microsec;  //get start time of echo pulse
-       echo_detect = 1;  //set flag that pulse detected
+      echo_start = microsec;  //get start time of echo pulse
+      echo_detect = 1;  //set flag that pulse detected
     }
     if (echo_detect && ((PINB & LEFT_ECHO_PIN_BARE) == 0b00000000)) {  // if echo pulse ended
       valid_read = 1;  //set flag that reading complete
@@ -689,31 +644,36 @@ void USsensor_setup()
   }
 
   //send packet
-}
-  
-/*
-  void right(float ang, float speed)
-  {
-  dir = RIGHT;
-  int val = pwmVal(speed);
-  if (ang == 0) {
-    deltaTicks = 9999999;
-  }
-  else {
-    deltaTicks = computeDeltaTicks(ang);
-  }
-  targetTicks = rightReverseTicksTurns + deltaTicks;
+  TPacket USPacket;
+  USPacket.packetType = PACKET_TYPE_RESPONSE;
+  USPacket.command = RESP_US_SENSOR;
+  USPacket.params[0] = response_time;
 
-  // For now we will ignore ang. We will fix this in Week 9.
-  // We will also replace this code with bare-metal later.
-  // To turn right we reverse the right wheel and move
-  // the left wheel forward.
-  analogWrite(RR, val);
-  analogWrite(LF, val);
-  analogWrite(LR, 0);
-  analogWrite(RF, 0);
+  //------------------------RIGHT------------------------------------------------
+  response_time = 0;  //store duration of echo pulse
+  echo_start;  //store start time of echo pulse
+  echo_detect = 0;  //flag to set when start of echo pulse detected
+  valid_read = 0;  // flag to set when reading is taken
+
+  PORTC |= RIGHT_TRIG_PIN; // set trigger pin
+  pulse_start = microsec;  // get start of pulse timing
+  while (microsec < pulse_start + 10);  // basically sleep for the duration of the pulse
+  PORTC &= ~RIGHT_TRIG_PIN;  //clear trigger pin
+  while (!valid_read && (microsec < pulse_start + ULTRASONIC_TIMEOUT)) {  // while ultrasonc reaading not done not timeout
+    if (!echo_detect && ((PINB & RIGHT_ECHO_PIN_BARE) == RIGHT_ECHO_PIN_BARE)) {  // if echo pulse detected
+      echo_start = microsec;  //get start time of echo pulse
+      echo_detect = 1;  //set flag that pulse detected
+    }
+    if (echo_detect && ((PINB & RIGHT_ECHO_PIN_BARE) == 0b00000000)) {  // if echo pulse ended
+      valid_read = 1;  //set flag that reading complete
+      response_time = microsec - echo_start;  //calculate duration of echo pulse
+    }
   }
-*/
+  USPacket.params[1] = response_time;
+  sendResponse(&USPacket);
+}
+
+
 
 // Stop Alex. To replace with bare-metal code later.
 void stop()
@@ -787,7 +747,7 @@ void initializeState()
   clearCounters();
 }
 
-void handleCommand(TPacket *command)
+void handleCommand(TPacket * command)
 {
   switch (command->command)
   {
@@ -829,9 +789,9 @@ void handleCommand(TPacket *command)
     case COMMAND_GET_COLOUR:
       readColor();
       break;
-      
+
     case COMMAND_GET_USS:
-      USsensor_reading();
+      getUltrasonic();
       break;
 
     /*
@@ -907,7 +867,7 @@ void setup() {
   sei();
 }
 
-void handlePacket(TPacket *packet)
+void handlePacket(TPacket * packet)
 {
   switch (packet->packetType)
   {
@@ -997,6 +957,41 @@ void loop() {
     }
   }
 }
+
+/*
+  void right(float ang, float speed)
+  {
+  dir = RIGHT;
+  int val = pwmVal(speed);
+  if (ang == 0) {
+    deltaTicks = 9999999;
+  }
+  else {
+    deltaTicks = computeDeltaTicks(ang);
+  }
+  targetTicks = rightReverseTicksTurns + deltaTicks;
+
+  // For now we will ignore ang. We will fix this in Week 9.
+  // We will also replace this code with bare-metal later.
+  // To turn right we reverse the right wheel and move
+  // the left wheel forward.
+  analogWrite(RR, val);
+  analogWrite(LF, val);
+  analogWrite(LR, 0);
+  analogWrite(RF, 0);
+  }
+*/
+
+
+/*
+   Alex's setup and run codes
+
+*/
+
+
+
+
+
 
 
 
