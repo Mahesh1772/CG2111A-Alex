@@ -48,8 +48,8 @@ volatile TDirection dir = STOP;
 #define ALEX_BREADTH 10
 
 // COLOR SENSOR PINS IN BARE-METAL
-#define S0 0b00100000 // pin 13 port B pin 5
-#define S1 0b00010000 // pin 12 port B pin 4
+#define S0 0b00100000 // pin 13 port C pin 5
+#define S1 0b00010000 // pin 12 port C pin 4
 #define S3 0b00000001 // pin 8 port B pin 0
 #define S2 0b00010000 // Pin 4 port D pin 4
 #define COLOR_OUT 0b10000000 // Pin 7 port D pin 7
@@ -146,7 +146,7 @@ void sendStatus()
   // Use the params array to store this information, and set the
   // packetType and command files accordingly, then use sendResponse
   // to send out the packet. See sendMessage on how to use sendResponse.
-  //
+
   TPacket statusPacket;
   statusPacket.packetType = PACKET_TYPE_RESPONSE;
   statusPacket.command = RESP_STATUS;
@@ -246,11 +246,6 @@ void sendResponse(TPacket *packet)
 }
 
 
-/*
-   Setup and start codes for external interrupts and
-   pullup resistors.
-
-*/
 // Enable pull up resistors on pins 2 and 3
 void enablePullups()
 {
@@ -445,6 +440,7 @@ void setupMotors()
         B1IN - Pin 10, PB2, OC1B
         B2In - pIN 11, PB3, OC2A
   */
+  
   // prescaler = 256
   // PWM, phase correct
   TCCR0A = 0b00000001;
@@ -648,13 +644,14 @@ void setupColor()
   //Set COLOR_OUT to input to get the color intensity which is read.
   //s2 and s3 to control the current color, hence set to output
   //s0 and s1 control the frequency scalling, hence set to output
-  DDRB |= (S0 | S1 | S3);
-  DDRD |= (S2);
+  DDRB |= S3;
+  DDRC |= (S0 | S1)
+  DDRD |= S2;
   DDRD &= ~(COLOR_OUT);
 
   //Setting frequency scaling to a fixed level of 20%
-  PORTB |= S0;
-  PORTB &= ~(S1);
+  PORTC |= S0;
+  PORTC &= ~(S1);
 }
 
 void readColor()
