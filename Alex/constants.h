@@ -44,7 +44,8 @@ typedef enum
   COMMAND_GET_STATS = 5,
   COMMAND_CLEAR_STATS = 6,
   COMMAND_GET_USS = 7,
-  COMMAND_GET_COLOUR = 8
+  COMMAND_GET_COLOUR = 8,
+  COMMAND_SOUND = 9;
 } TCommandType;
 #endif
 
