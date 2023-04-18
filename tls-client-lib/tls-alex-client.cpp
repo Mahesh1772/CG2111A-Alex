@@ -313,10 +313,10 @@ void *writerThread(void *conn)
 		
 			case 'p':
 			case 'P':
-				  printw("Enter the following code to rick roll your enemies - 'rickroll'\n");
+				  printw("Enter the following command when victim spotted - 'victim'\n");
         			  char* input = new char[10];
       				  getnstr(input, 10);
-     				   if(strcmp(input, "rickroll") == 0) 
+     				   if(strcmp(input, "victim") == 0) 
 					{
 					  params[0] = 0;
 					  params[1]= 0;
