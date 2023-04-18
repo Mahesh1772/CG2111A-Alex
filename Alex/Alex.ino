@@ -992,6 +992,10 @@ void handleCommand(TPacket *command)
     case COMMAND_GET_USS:
       USsensor_reading();
       break;
+      
+    case COMMAND_SOUND:
+      sendOK();
+      song();
 
     /*
        Implement code for other commands here.
