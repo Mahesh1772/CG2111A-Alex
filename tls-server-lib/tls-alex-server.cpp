@@ -329,8 +329,8 @@ void handleCommand(void *conn, const char *buffer)
 			commandPacket.command = COMMAND_GET_USS;
 			uartSendPacket(&commandPacket);
 			break;
-		case 'n':
-		case 'N':
+		case 't':
+		case 'T':
 			commandPacket.command = COMMAND_SOUND;
 			uartSendPacket(&commandPacket);
 			break;
