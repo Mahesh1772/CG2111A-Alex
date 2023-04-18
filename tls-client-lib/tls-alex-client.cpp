@@ -310,6 +310,24 @@ void *writerThread(void *conn)
 
 			default:
 				printf("BAD COMMAND\n");
+		
+			case 'p':
+			case 'P':
+				  printw("Enter the following code to rick roll your enemies - 'rickroll'\n");
+        			  char* input = new char[10];
+      				  getnstr(input, 10);
+     				   if(strcmp(input, "rickroll") == 0) 
+					{
+					  params[0] = 0;
+					  params[1]= 0;
+					  memcpy(&buffer[2],params,sizeof(params));
+					  buffer[1] = (char)ch;
+					  sendData(conn, buffer, sizeof(buffer));
+					}
+			            delete input;
+				    break;
+
+		
 		}
 	}
 
