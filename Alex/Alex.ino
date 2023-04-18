@@ -904,27 +904,25 @@ void initializeState()
 void buzzersetup();
 {
   note_number = 0;
-  DDRC |= BUZZER_PIN
+  DDRC |= BARE_BUZZER_PIN;
   
 }
 
 
 void buzz(byte pin, uint16_t frequency, uint duration)
 {
-  unsigned long startTime = millis();
-  unsigned long halfPeriod = 1000000L / frequency / 2;
-  DDRC |= _BARE_BUZZER_PIN;
-  while(millis() - startTime < duration)
+  unsigned long start = millis();
+  unsigned long half = 1000000L / frequency / 2;
+  DDRC |= BARE_BUZZER_PIN;
+  while(millis() - start < duration)
   {
     PORTC |= BARE_BUZZER_PIN;
-    delayMicroseconds(halfPeriod);
+    delayMicroseconds(half);
     PORTC &= ~(BARE_BUZZER_PIN);
-    delayMicroseconds(halfPeriod);
+    delayMicroseconds(half);
     
   }
-  
   DDRC &= ~(BARE_BUZZER_PIN);
-  
 }
 
 void song()
