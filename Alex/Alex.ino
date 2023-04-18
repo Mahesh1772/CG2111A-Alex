@@ -996,6 +996,7 @@ void handleCommand(TPacket *command)
     case COMMAND_SOUND:
       sendOK();
       song();
+      break;
 
     /*
        Implement code for other commands here.
