@@ -63,6 +63,47 @@ volatile TDirection dir = STOP;
 #define LEFT_ECHO_PIN        13// pin 13 port B Pin 5
 #define LEFT_ECHO_PIN_BARE   0b00100000
 
+
+#define BUZZER_PIN A5
+#define BARE_BUZZER_PIN 0b00100000
+int note_number;
+#definte NOTE_A3FLAT 208
+#definte NOTE_B3FLAT 233
+#definte NOTE_B3     247
+#definte NOTE_C4     261
+#definte NOTE_C4SHARP 277
+#definte NOTE_E4FLAT 311
+#definte NOTE_F4     349
+#definte NOTE_A4FLAT 415
+#definte NOTE_B4FLAT 466
+#definte NOTE_B4     493
+#definte NOTE_C5 523
+#definte NOTE_C5SHARP 554
+#definte NOTE_E5FLAT 622
+#definte NOTE_F5 698
+#definte NOTE_F5SHARP 740
+#definte NOTE_A5FLAT 831
+#define GAP -1
+volatile beatlength = 100;
+float beatseparationconstant = 0.3;
+int threshold;
+
+int song_melody[] =
+{ NOTE_B4FLAT, NOTE_B4FLAT, NOTE_A4FLAT, NOTE_A4FLAT,
+ NOTE_F5, NOTE_F5, NOTE_E5FLAT, NOTE_B4FLAT, NOTE_B4FLAT, NOTE_A4FLAT, NOTE_A4FLAT, NOTE_E5FLAT, NOTE_E5FLAT, NOTE_C5SHARP, NOTE_C5, NOTE_B4FLAT, NOTE_C5SHARP, NOTE_C5SHARP,
+ NOTE_C5SHARP, NOTE_C5SHARP, NOTE_C5SHARP, NOTE_E5FLAT, NOTE_C5, NOTE_B4FLAT, NOTE_A4FLAT, NOTE_A4FLAT, NOTE_A4FLAT, NOTE_E5FLAT, NOTE_C5SHARP,
+ NOTE_B4FLAT, NOTE_B4FLAT, NOTE_A4FLAT, NOTE_A4FLAT, NOTE_F5, NOTE_F5, NOTE_E5FLAT, NOTE_B4FLAT, NOTE_B4FLAT, NOTE_A4FLAT, NOTE_A4FLAT, NOTE_A5FLAT, NOTE_C5, NOTE_C5SHARP, NOTE_C5, NOTE_B4FLAT,
+ NOTE_C5SHARP, NOTEA_C5SHARP, NOTE_C5SHARP, NOTE_C5SHARP, NOTE_C5SHARP, NOTE_E5FLAT, NOTE_C5, NOTE_B4FLAT, NOTE_B4FLAT, GAP, NOTE_A4FLAT, NOTE_E5FLAT, NOTE_E5FLAT, NOTE_C5SHARP, GAP
+};
+
+int song_rhythm[] = 
+{
+  1,1,1,1,3,3,6,1,1,1,1,3,3,3,1,2,1,1,1,1,3,3,3,1,2,2,2,4,8,1,1,1,1,3,3,6,1,1,1,1,3,3,3,1,2,1,1,1,1,3,3,3,1,2,2,2,4,8,4
+};
+
+
+
+
 double PulseTimeL;
 long USDistL;
 
@@ -860,6 +901,51 @@ void initializeState()
   clearCounters();
 }
 
+void buzzersetup();
+{
+  note_number = 0;
+  DDRC |= BUZZER_PIN
+  
+}
+
+
+void buzz(byte pin, uint16_t frequency, uint duration)
+{
+  unsigned long startTime = millis();
+  unsigned long halfPeriod = 1000000L / frequency / 2;
+  DDRC |= _BARE_BUZZER_PIN;
+  while(millis() - startTime < duration)
+  {
+    PORTC |= BARE_BUZZER_PIN;
+    delayMicroseconds(halfPeriod);
+    PORTC &= ~(BARE_BUZZER_PIN);
+    delayMicroseconds(halfPeriod);
+    
+  }
+  
+  DDRC &= ~(BARE_BUZZER_PIN);
+  
+}
+
+void song()
+{
+  for (int i = 0; i < 59; i += 1)
+  {
+    int notelength;
+    
+    notelength = beatlength * song_rhythm[note_number];
+    if (song_melody[note_number] > 0 {
+      buzz(BUZZER_PIN, song_melody[note_number], notelength/6)
+    }
+    note_number += 1;
+    if (note_number >= sizeof(song_melody) /sizeof(int)){
+      note_number = 0;
+    }
+    delay(notelength/6);
+  }
+}
+
+
 void handleCommand(TPacket *command)
 {
   switch (command->command)
@@ -966,6 +1052,7 @@ void setup() {
   
   setupColor();
   USsensor_setup();
+  buzzersetup();
   initializeState();
   sei();
 }
