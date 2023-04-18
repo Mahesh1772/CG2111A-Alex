@@ -64,8 +64,8 @@ volatile TDirection dir = STOP;
 #define LEFT_ECHO_PIN_BARE   0b00100000
 
 
-#define BUZZER_PIN A5
-#define BARE_BUZZER_PIN 0b00100000
+#define BUZZER_PIN A1
+#define BARE_BUZZER_PIN 0b00000010
 int note_number;
 #definte NOTE_A3FLAT 208
 #definte NOTE_B3FLAT 233
