@@ -232,17 +232,6 @@ void *writerThread(void *conn)
 			case 'W':
 			case 's':
 			case 'S':
-				/*getWASDParams(params);
-				buffer[1] = ch;
-				memcpy(&buffer[2], params, sizeof(params));
-				sendData(conn, buffer, sizeof(buffer));
-				break;*/
-				params[0]=10;
-				params[1]=100;
-                memcpy(&buffer[2], params, sizeof(params));
-                buffer[1] = ch;
-                sendData(conn, buffer, sizeof(buffer));
-				break;
 			case 'a':
 			case 'A':
 			case 'd':
@@ -254,9 +243,9 @@ void *writerThread(void *conn)
 				break;*/
 				params[0]=10;
 				params[1]=100;
-                memcpy(&buffer[2], params, sizeof(params));
-                buffer[1] = ch;
-                sendData(conn, buffer, sizeof(buffer));
+                		memcpy(&buffer[2], params, sizeof(params));
+                		buffer[1] = ch;
+                		sendData(conn, buffer, sizeof(buffer));
 				break;
 
 			case 'f':
@@ -294,40 +283,33 @@ void *writerThread(void *conn)
 			case 'M':
 				params[0]=0;
 				params[1]=0;
-                memcpy(&buffer[2], params, sizeof(params));
-                buffer[1] = ch;
-                sendData(conn, buffer, sizeof(buffer));
+                		memcpy(&buffer[2], params, sizeof(params));
+                		buffer[1] = ch;
+                		sendData(conn, buffer, sizeof(buffer));
+				break;
+				
+			case 't':
+			case 'T':
+				 
+				params[0] = 0;
+				params[1]= 0;
+				memcpy(&buffer[2],params,sizeof(params));
+				buffer[1] = (char)ch;
+				sendData(conn, buffer, sizeof(buffer));
 				break;
 				
 			case 'Z':
 			case 'z':
-				//params[0]=0;
-				//params[1]=0;
-                memcpy(&buffer[2], params, sizeof(params));
-                buffer[1] = ch;
-                sendData(conn, buffer, sizeof(buffer));
+				params[0]=0;
+				params[1]=0;
+                		memcpy(&buffer[2], params, sizeof(params));
+                		buffer[1] = ch;
+                		sendData(conn, buffer, sizeof(buffer));
 				break;
 
 			default:
 				printf("BAD COMMAND\n");
-		
-			case 'p':
-			case 'P':
-				  printw("Enter the following command when victim spotted - 'victim'\n");
-        			  char* input = new char[10];
-      				  getnstr(input, 10);
-     				   if(strcmp(input, "victim") == 0) 
-					{
-					  params[0] = 0;
-					  params[1]= 0;
-					  memcpy(&buffer[2],params,sizeof(params));
-					  buffer[1] = (char)ch;
-					  sendData(conn, buffer, sizeof(buffer));
-					}
-			            delete input;
-				    break;
 
-		
 		}
 	}
 
