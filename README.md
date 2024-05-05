@@ -28,4 +28,8 @@ Alex is an autonomous robotic system designed for search and rescue operations i
 4. **Environment Mapping**: Simultaneously, the LiDAR sensor continuously scans the surroundings, and the collected data is processed using the Hector SLAM (Simultaneous Localization and Mapping) algorithm to generate a live map, which is displayed to the operator.
 5. **Victim/Object Detection**: When Alex encounters a potential victim or object of interest, the color sensor is activated, and the detected color is relayed back to the operator through the secure connection.
 
+## Documentation
+
+For a detailed overview of the project, please refer to the [design report](Alex Design Report.pdf).
+
 With its advanced sensor suite, robust communication system, and precise navigation capabilities, Alex is designed to provide a reliable and efficient solution for search and rescue operations in hazardous or inaccessible environments.
