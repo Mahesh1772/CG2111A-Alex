@@ -30,6 +30,6 @@ Alex is an autonomous robotic system designed for search and rescue operations i
 
 ## Documentation
 
-For a detailed overview of the project, please refer to the [design report](Alex Design Report.pdf).
+For a detailed overview of the project, please refer to the [design report](Alex_Design_Report.pdf).
 
 With its advanced sensor suite, robust communication system, and precise navigation capabilities, Alex is designed to provide a reliable and efficient solution for search and rescue operations in hazardous or inaccessible environments.
